@@ -1,0 +1,34 @@
+PANDUAN PASANG SERVER PUSH ARGO TOOKEE (gratis di Vercel)
+
+A. UNGGAH
+1. Buka vercel.com, login (bisa pakai akun Google/GitHub).
+2. Add New > Project > unggah folder 5_UPLOAD_PUSH_SERVER ini
+   (atau taruh di GitHub lalu Import).
+3. Klik Deploy. Catat alamatnya, mis. https://argo-push.vercel.app
+
+B. ISI KUNCI (Settings > Environment Variables)
+   VAPID_PUBLIC   = (kunci publik)
+   VAPID_PRIVATE  = (kunci privat)
+   VAPID_SUBJECT  = mailto:emailanda@gmail.com
+   FIREBASE_URL   = https://argo-tookee-default-rtdb.asia-southeast1.firebasedatabase.app
+   Setelah mengisi, klik Deployments > Redeploy.
+
+   PENTING TENTANG KUNCI:
+   - Kunci publik yang dipakai aplikasi sekarang berawalan:
+       BMGYkWyJ6a-sv2--CctLeZ5HMxZS1zWJCGq6rkf-...
+     Kalau Anda MASIH PUNYA kunci privat pasangannya (dari server lama), pakai itu.
+   - Kalau tidak punya, buat pasangan baru: jalankan "npm install web-push" lalu
+     "node buat-kunci.js". Kunci publik BARU itu harus diganti di semua aplikasi
+     (Pantau, Petugas/Smart, Supir) pada baris ARGO_VAPID, lalu aplikasi
+     diperbarui dan semua orang membuka aplikasi sekali supaya mendaftar ulang.
+
+C. TES
+   Buka https://ALAMAT-ANDA/api/push di browser.
+   Harus tampil: {"ok":true,"ready":true}
+   Kalau ready:false, kunci belum terisi.
+
+D. SAMBUNGKAN KE APLIKASI
+   Isi ARGO_PUSH_API di Pantau, Petugas, dan Supir dengan:
+       https://ALAMAT-ANDA/api/push
+   Di HP: buka aplikasi, izinkan notifikasi, lalu ketuk layar sekali.
+   Matikan penghemat baterai untuk aplikasinya.
