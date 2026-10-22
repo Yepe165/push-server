@@ -7,7 +7,10 @@ const PUB = process.env.VAPID_PUBLIC;
 const PRV = process.env.VAPID_PRIVATE;
 const SUB = process.env.VAPID_SUBJECT || 'mailto:admin@example.com';
 
-if (PUB && PRV) webpush.setVapidDetails(SUB, PUB, PRV);
+let VAPID_ERR = '';
+try {
+  if (PUB && PRV) webpush.setVapidDetails(SUB, String(PUB).trim(), String(PRV).trim());
+} catch (e) { VAPID_ERR = String((e && e.message) || e).slice(0, 200); }
 
 const okG = g => /^[A-Z0-9-]{1,40}$/.test(g);
 const okK = k => typeof k === 'string' && k.length > 0 && k.length <= 120;
@@ -25,8 +28,9 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method === 'GET') return res.status(200).json({ ok: true, ready: !!(PUB && PRV) });
+  if (req.method === 'GET') return res.status(200).json({ ok: true, ready: !!(PUB && PRV) && !VAPID_ERR, pub: !!PUB, prv: !!PRV, err: VAPID_ERR || undefined });
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
+  if (VAPID_ERR) return res.status(500).json({ ok: false, err: VAPID_ERR });
   if (!PUB || !PRV) return res.status(500).json({ ok: false, err: 'VAPID_PUBLIC / VAPID_PRIVATE belum diisi di Vercel' });
 
   let b = req.body;
